@@ -1,0 +1,7 @@
+index.js -> Responsable for call all layers
+
+services -> bussiness logic, all api calls (API, files, databases)
+views -> all the interaction with DOM (HTLM, with the page)
+controller -> middleman between services/workers and views
+factories -> import all depencencies and create the final object
+workers -> All heavy logic that uses too much of the CPU, everything that can frozen the screen (for loops, machine learning etc...), also call the service busines logic
