@@ -1,9 +1,11 @@
 export default class Controller {
   #view
   #service
-  constructor({ view, service }) {
+  #worker
+  constructor({ view, service, worker }) {
     this.#view = view
     this.#service = service
+    this.#worker = this.#configureWorker(worker)
 
     // using my this class 'this'
     this.#view.configureOnBtnClick(this.onBtnStart.bind(this))
@@ -25,5 +27,16 @@ export default class Controller {
 
   onBtnStart() {
     this.log('initializing eye recognition...')
+  }
+
+  #configureWorker(worker) {
+    worker.onmessage = (msg) => {
+      if (msg.data === 'TF_MODEL_READY') {
+        this.#view.enableButton()
+        return;
+      }
+    }
+
+    return worker
   }
 }
