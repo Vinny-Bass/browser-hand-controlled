@@ -1,11 +1,11 @@
 export default class Controller {
   #view
-  #service
+  #camera
   #worker
-  constructor({ view, service, worker }) {
+  constructor({ view, service, worker, camera }) {
     this.#view = view
-    this.#service = service
     this.#worker = this.#configureWorker(worker)
+    this.#camera = camera
 
     // using my this class 'this'
     this.#view.configureOnBtnClick(this.onBtnStart.bind(this))
@@ -27,16 +27,36 @@ export default class Controller {
 
   onBtnStart() {
     this.log('initializing eye recognition...')
+    this.loop()
+  }
+
+  loop() {
+    const video = this.#camera.video
+    const img = this.#view.getVideoFrame(video)
+    this.#worker.send(img)
+    this.log('detecting eye blink')
+
+    setTimeout(() => this.loop, 100)
   }
 
   #configureWorker(worker) {
+    let ready = false
     worker.onmessage = (msg) => {
       if (msg.data === 'TF_MODEL_READY') {
+        console.log('Worker is ready')
+        ready = true
         this.#view.enableButton()
         return;
       }
+      const blinked = msg.data.blinked
+      console.log({ blinked })
     }
 
-    return worker
+    return {
+      send(msg) {
+        if (!ready) return;
+        worker.postMessage(msg)
+      }
+    }
   }
 }

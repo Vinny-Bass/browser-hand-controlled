@@ -16,10 +16,10 @@ const service = new Service({
 console.log('loading tf model')
 await service.loadModel()
 console.log('tf model loaded')
-
 postMessage('TF_MODEL_READY')
 
-onmessage = ({ data }) => {
-  console.log('hello')
-  postMessage({ response: 'ok' })
+onmessage = async ({ data: videoFrame }) => {
+  const blinked = await service.handleBlinks(videoFrame)
+  if (!blinked) return;
+  postMessage({ blinked })
 }
