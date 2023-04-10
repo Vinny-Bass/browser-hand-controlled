@@ -36,7 +36,7 @@ export default class Controller {
     this.#worker.send(img)
     this.log('detecting eye blink')
 
-    setTimeout(() => this.loop, 100)
+    setTimeout(() => this.loop(), 100)
   }
 
   #configureWorker(worker) {
@@ -49,6 +49,7 @@ export default class Controller {
         return;
       }
       const blinked = msg.data.blinked
+      this.#view.tooglePlayVideo()
       console.log({ blinked })
     }
 

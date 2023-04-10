@@ -26,3 +26,15 @@ export async function loadExternalLibraries() {
     console.error('Failed to load external libraries', error);
   }
 }
+
+export function prepareRunChecker({ timerDelay }) {
+  let lastEvent = Date.now()
+  return {
+    shouldRun() {
+      const result = (Date.now() - lastEvent) > timerDelay
+      if (result) lastEvent = Date.now()
+
+      return result
+    }
+  }
+}
